@@ -3,7 +3,7 @@ var FilterableTable = React.createClass({
     return (
       <div>
         <SearchBar />
-        <ProductTable />
+        <ProductTable products={this.props.products}/>
       </div>
     )
   }
@@ -12,30 +12,54 @@ var FilterableTable = React.createClass({
 var SearchBar = React.createClass({
   render: function() {
     return (
-      <div>
-        Search Bar
-      </div>
+      <form>
+        <input type="text" placeholder="Search..." /><br />
+        <input type="checkbox" />
+        <span> Only show products in stock</span>
+      </form>
     )
   }
 })
 
 var ProductTable = React.createClass({
   render: function() {
+    var rows = []
+    var lastCategory = null
+    this.props.products.forEach(function(product) {
+      if (product.category !== lastCategory) {
+        rows.push(<CategoryRow category={product.category} key={product.category} />)
+        lastCategory = product.category
+      }
+
+      rows.push(<ProductRow product={product} key={product.name} />)
+    })
+
     return (
-      <div>
-        <CategoryRow />
-        <ProductRow />
-      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Price</th>
+          </tr>
+        </thead>
+        <tbody>
+          {rows}
+        </tbody>
+      </table>
     )
   }
 })
 
 var ProductRow = React.createClass({
   render: function() {
+    var name = this.props.product.stocked ? this.props.product.name :
+      <span style={{color: "red"}}>{this.props.product.name}</span>
+
     return (
-      <div>
-        Product Row
-      </div>
+      <tr>
+        <td>{name}</td>
+        <td>{this.props.product.price}</td>
+      </tr>
     )
   }
 })
@@ -43,9 +67,7 @@ var ProductRow = React.createClass({
 var CategoryRow = React.createClass({
   render: function() {
     return (
-      <div>
-        Category Row
-      </div>
+      <tr><th colSpan="2">{this.props.category}</th></tr>
     )
   }
 })
