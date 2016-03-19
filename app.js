@@ -6,12 +6,20 @@ var FilterableTable = React.createClass({
     };
   },
 
+  handleUserInput: function(filterText, inStockOnly) {
+    this.setState({
+      filterText: filterText,
+      inStockOnly: inStockOnly
+    })
+  },
+
   render: function() {
     return (
       <div>
         <SearchBar
           filterText={this.state.filterText}
           inStockOnly={this.state.inStockOnly}
+          onUserInput={this.handleUserInput}
         />
         <ProductTable
           products={this.props.products}
@@ -24,11 +32,30 @@ var FilterableTable = React.createClass({
 })
 
 var SearchBar = React.createClass({
+  handleChange: function() {
+    this.props.onUserInput(
+      this.refs.filterTextInput.value,
+      this.refs.inStockOnlyInput.checked
+    )
+  },
+
   render: function() {
     return (
       <form>
-        <input type="text" placeholder="Search..." value={this.props.filterText} /><br />
-        <input type="checkbox" checked={this.props.inStockOnly}/>
+        <input
+          type="text"
+          placeholder="Search..."
+          value={this.props.filterText}
+          ref="filterTextInput"
+          onChange={this.handleChange}
+        />
+        <br />
+        <input
+          type="checkbox"
+          checked={this.props.inStockOnly}
+          ref="inStockOnlyInput"
+          onChange={this.handleChange}
+        />
         <span> Only show products in stock</span>
       </form>
     )
